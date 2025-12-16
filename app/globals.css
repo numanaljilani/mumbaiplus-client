@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+
+/* Google Translate Banner Styles */
+.goog-te-banner-frame {
+  position: fixed !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+}
+
+.goog-te-menu-frame {
+  z-index: 1000 !important;
+  max-width: 100% !important;
+}
+
+/* Hide Google Translate branding */
+.goog-logo-link {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  color: transparent !important;
+}
+
+.goog-te-gadget .goog-te-combo {
+  margin: 0 !important;
+}
+
+/* Fix for translated content */
+body {
+  top: 0 !important;
+}
+
+
+/* Article content styling */
+.prose {
+  color: #374151;
+  line-height: 1.75;
+}
+
+.prose h2 {
+  color: #111827;
+  font-weight: 700;
+  font-size: 1.5em;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  line-height: 1.3333333;
+}
+
+.prose h3 {
+  color: #111827;
+  font-weight: 600;
+  font-size: 1.25em;
+  margin-top: 1.6em;
+  margin-bottom: 0.6em;
+  line-height: 1.6;
+}
+
+.prose p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+
+.prose ul {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+
+.prose li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose blockquote {
+  font-weight: 500;
+  font-style: italic;
+  color: #111827;
+  border-left-width: 0.25rem;
+  border-left-color: #e5e7eb;
+  quotes: "\201C""\201D""\2018""\2019";
+  margin-top: 1.6em;
+  margin-bottom: 1.6em;
+  padding-left: 1em;
+}
+
+.prose blockquote p:first-of-type::before {
+  content: open-quote;
+}
+
+.prose blockquote p:last-of-type::after {
+  content: close-quote;
+}
+
+.prose blockquote footer {
+  margin-top: 0.5em;
+  font-style: normal;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.prose blockquote footer::before {
+  content: "— ";
+}
+
+
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* globals.css */
+.font-mumbai {
+  font-family: 'Hind', 'Noto Sans Devanagari', sans-serif !important;
+}
+
+.font-bold-hindi {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-weight: 900;
+}
