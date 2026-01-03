@@ -60,7 +60,7 @@ const EpaperAdminDashboard = () => {
         isError,
         refetch // सूची को मैन्युअल रूप से रीलोड करने के लिए
     } = useGetAllEPapersQuery(); 
-    console.log(epapers)
+  
  
     
     // Mutation hooks
@@ -84,7 +84,7 @@ const EpaperAdminDashboard = () => {
     });
 
     const epaperList = epapers?.data.epapers || []; // सुनिश्चित करें कि यह एक ऐरे है
-    console.log(epaperList)
+ 
     const isEditing = currentItem !== null;
     const modalTitle = isEditing ? 'ई-पेपर अपडेट करें' : 'नया ई-पेपर अपलोड करें';
     const isLoading = isFetching || isCreating || isUpdating || isDeleting;

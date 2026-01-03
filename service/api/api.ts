@@ -10,7 +10,7 @@ export const apis = createApi({
     baseUrl: `${server}/api`,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as any)?.user?.token;
-      console.log(token, "INSIDE TOKEN");
+
 
       if (token) {
         headers.set("Authorization", `Bearer ${token?.token}`);
@@ -22,7 +22,7 @@ export const apis = createApi({
   endpoints: (builder) => ({
     isAvailable: builder.mutation({
       query: (args) => {
-        console.log(args, ">>>>>>>");
+   
         return {
           url: "/isAvailable",
           method: "POST",
@@ -35,7 +35,7 @@ export const apis = createApi({
     }),
     login: builder.mutation({
       query: (args) => {
-        console.log(args, ">>>>>>>");
+     
         return {
           url: "/auth/login",
           method: "POST",
@@ -67,7 +67,7 @@ export const apis = createApi({
 
     registerReporter: builder.mutation({
       query: (args) => {
-        console.log(args, ">>>>>>>");
+    
         return {
           url: "/auth/register",
           method: "POST",
@@ -81,7 +81,7 @@ export const apis = createApi({
 
     updateProfile: builder.mutation({
       query: ({ data, id }) => {
-        console.log(data, "ISIDE API");
+ 
         return {
           url: `/update-with-image`,
           method: "PUT",
@@ -95,8 +95,7 @@ export const apis = createApi({
     }),
     uploadPost: builder.mutation({
       query: (args) => {
-        console.log(args.body, ">>>>>>>");
-        console.log(args.token, ">>>>>>> token");
+
         return {
           url: "/postimage",
           method: "POST",
@@ -156,7 +155,7 @@ export const apis = createApi({
     // सभी पोस्ट्स (पेंडिंग + अप्रूव्ड)
     getAllPosts: builder.query({
       query: ({ page = 1, search = "", status = "" }) => {
-        console.log(status , "status")
+
         return `/posts?page=${page}&search=${search}&status=${status}`;
       },
       // providesTags: ['Post'],
@@ -213,7 +212,7 @@ export const apis = createApi({
 
     createEpaper: builder.mutation({
       query: (data) => {
-        console.log(data, "DATA");
+
         return {
           url: `/epaper`,
           method: "POST",

@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const NewsCard = ({ _id, heading, description
 , image, date, category }) => {
-  console.log(image , ">>>")
+
   return (
   <Link 
     href={`/news/${_id}`}

@@ -68,7 +68,7 @@ function AdminPostsContent() {
     endDate: dateRange.end,
   });
 
-  console.log(data , "data")
+
 
   const [approvePost] = useApprovePostMutation();
   const [deletePost] = useDeletePostMutation();
@@ -301,12 +301,14 @@ function AdminPostsContent() {
                 {post.image && (
                   <Link href={`/news/${post?._id}`} className="cursor-pointer">
                   <div className="relative h-64 bg-gray-100">
+                    <div className="w-full border-2 max-h-1/2 overflow-hidden">
                     <img
                       src={post.image}
                       alt={post.heading}
                       fill
-                      className="object-cover"
+                      className="object-fit overflow-hidden"
                     />
+                    </div>
                     <div className="absolute top-4 right-4 flex flex-col gap-2">
                       <div
                         className={`px-4 py-2 rounded-full font-bold ${
