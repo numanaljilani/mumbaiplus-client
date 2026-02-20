@@ -1,3 +1,4 @@
+// app/login/page.jsx (or wherever your login page is)
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -9,20 +10,14 @@ import { useState } from 'react';
 import { Mail, Loader2, X, AlertTriangle, PhoneCall } from 'lucide-react';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation } from '../../service/api/api';
-import { setToken , setUser} from "../../service/slice/userSlice"
-
-// Assuming these are imported from your actual Redux setup files
-// import { useLoginMutation } from '../../service/api/api';
-// import { setToken , setUser } from "../../service/slice/userSlice"
-
-
+import { setToken, setUser } from "../../service/slice/userSlice";
+import ForgotPasswordDialog from '../../components/ForgotPasswordDialog'; // Import the dialog
 
 // Zod Schema
 const loginSchema = z.object({
   email: z.string().email('मान्य ईमेल पता दें'),
   password: z.string().min(6, 'पासवर्ड कम से कम 6 अक्षर का हो'),
 });
-
 
 // --- Modal Component ---
 const ResponseModal = ({ isOpen, onClose, title, message, contactNumber = '9594939595' }) => {
@@ -69,7 +64,6 @@ const ResponseModal = ({ isOpen, onClose, title, message, contactNumber = '95949
   );
 };
 
-
 // --- Main Component ---
 export default function LoginPage() {
   const router = useRouter();
@@ -78,6 +72,9 @@ export default function LoginPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  
+  // State for forgot password dialog
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const {
     register,
@@ -96,8 +93,7 @@ export default function LoginPage() {
   const onSubmit = async (data) => {
     clearErrors('root');
     try {
-      const result = await login(data).unwrap(); 
-
+      const result = await login(data).unwrap();
 
       // Redux में स्टोर करें
       dispatch(setToken({ token: result.token }));
@@ -122,9 +118,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 font-inter flex  justify-center p-4">
+    <div className="min-h-screen bg-gray-100 font-inter flex justify-center p-4">
       <style jsx global>{`
-        /* Custom font for the classic newspaper feel */
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;700&display=swap');
         
         .font-headline {
@@ -147,10 +142,8 @@ export default function LoginPage() {
           animation: slide-up 0.3s ease-out forwards;
         }
       `}</style>
+      
       <div className="w-full max-w-lg font-body">
-
-        {/* Header Section: Classic Newspaper Masthead Style */}
-       
 
         {/* Global Error */}
         {errors.root && (
@@ -234,7 +227,13 @@ export default function LoginPage() {
                 <a href="/register-reporter" className="font-bold text-red-600 hover:text-red-700 hover:underline">रिपोर्टर बनें</a>
               </p>
               <p className="mt-1">
-                <a href="#" className="text-gray-500 hover:text-red-600 hover:underline">पासवर्ड भूल गए?</a>
+                <button
+                  type="button"
+                  onClick={() => setIsForgotPasswordOpen(true)}
+                  className="text-gray-500 hover:text-red-600 hover:underline"
+                >
+                  पासवर्ड भूल गए?
+                </button>
               </p>
             </div>
           </form>
@@ -253,6 +252,12 @@ export default function LoginPage() {
         onClose={handleCloseModal}
         title="सत्यापन लंबित"
         message={modalMessage}
+      />
+
+      {/* Forgot Password Dialog */}
+      <ForgotPasswordDialog
+        isOpen={isForgotPasswordOpen}
+        onClose={() => setIsForgotPasswordOpen(false)}
       />
     </div>
   );

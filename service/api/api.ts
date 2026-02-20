@@ -46,6 +46,27 @@ export const apis = createApi({
         };
       },
     }),
+    forgotPassword: builder.mutation({
+      query: (data) => ({
+        url: '/auth/forgot-password/request-otp',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    verifyOtp: builder.mutation({
+      query: (data) => ({
+        url: '/auth/forgot-password/verify-otp',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    resetPassword: builder.mutation({
+      query: (data) => ({
+        url: '/auth/forgot-password/reset',
+        method: 'POST',
+        body: data,
+      }),
+    }),
     googleAuth: builder.mutation({
       query: ({ token }) => ({
         url: "auth/google",
@@ -246,6 +267,9 @@ export const {
 
   useUploadPostMutation,
   useLoginMutation,
+   useForgotPasswordMutation,
+  useVerifyOtpMutation,
+  useResetPasswordMutation,
   useMeMutation,
   useIsAvailableMutation,
 

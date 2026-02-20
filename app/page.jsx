@@ -32,8 +32,11 @@ import {
   ArrowRight,
   LayoutList,
   Zap,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
-import { randomBytes } from "crypto";
 
 // --- Configuration ---
 
@@ -106,7 +109,7 @@ const BreakingNewsTicker = () => {
           <div className="flex w-full animate-marquee">
             {marqueeItems.map((news, index) => (
               <Link
-                key={`news-${ index}`}
+                key={`news-${index}`}
                 href={`/news/${news.slug || news._id}`}
                 className="px-6 text-sm hover:underline whitespace-nowrap"
               >
@@ -170,7 +173,7 @@ const LoadingState = () => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
     {[...Array(8)].map((_, i) => (
       <div
-        key={i }
+        key={i}
         className="bg-gray-50 rounded-lg shadow-sm overflow-hidden animate-pulse border border-gray-200"
       >
         <div className="h-40 bg-gray-200"></div>
@@ -183,6 +186,132 @@ const LoadingState = () => (
     ))}
   </div>
 );
+
+// --- Pagination Component with Numbers ---
+const Pagination = ({ currentPage, totalPages, onPageChange, isLoading }) => {
+  if (totalPages <= 1) return null;
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const delta = 2; // Number of pages to show on each side of current page
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+        range.push(i);
+      }
+    }
+
+    range.forEach((i) => {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    });
+
+    return rangeWithDots;
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-4 mt-10 mb-6">
+      {/* Page Info */}
+      <div className="text-sm text-gray-600">
+        पेज <span className="font-bold text-yellow-600">{currentPage}</span> का{' '}
+        <span className="font-bold text-yellow-600">{totalPages}</span>
+      </div>
+
+      {/* Pagination Numbers */}
+      <div className="flex items-center gap-2 flex-wrap justify-center">
+        {/* First Page Button */}
+        <button
+          onClick={() => onPageChange(1)}
+          disabled={currentPage === 1 || isLoading}
+          className="p-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          aria-label="पहला पेज"
+        >
+          <ChevronsLeft className="w-4 h-4" />
+        </button>
+
+        {/* Previous Button */}
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1 || isLoading}
+          className="p-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          aria-label="पिछला पेज"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+
+        {/* Page Numbers */}
+        {getPageNumbers().map((page, index) => (
+          <React.Fragment key={index}>
+            {page === '...' ? (
+              <span className="px-3 py-2 text-gray-500">...</span>
+            ) : (
+              <button
+                onClick={() => onPageChange(page)}
+                disabled={isLoading}
+                className={`min-w-[40px] h-10 rounded-lg font-semibold transition ${
+                  currentPage === page
+                    ? 'bg-yellow-600 text-white shadow-md hover:bg-yellow-700'
+                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
+                } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {page}
+              </button>
+            )}
+          </React.Fragment>
+        ))}
+
+        {/* Next Button */}
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages || isLoading}
+          className="p-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          aria-label="अगला पेज"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+
+        {/* Last Page Button */}
+        <button
+          onClick={() => onPageChange(totalPages)}
+          disabled={currentPage === totalPages || isLoading}
+          className="p-2 rounded-lg border border-gray-300 bg-white text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          aria-label="आखिरी पेज"
+        >
+          <ChevronsRight className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Go to Page Input (Optional) */}
+      <div className="flex items-center gap-2 mt-2">
+        <span className="text-sm text-gray-600">पेज पर जाएं:</span>
+        <input
+          type="number"
+          min={1}
+          max={totalPages}
+          value={currentPage}
+          onChange={(e) => {
+            const page = parseInt(e.target.value);
+            if (page >= 1 && page <= totalPages) {
+              onPageChange(page);
+            }
+          }}
+          className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center"
+          disabled={isLoading}
+        />
+      </div>
+    </div>
+  );
+};
 
 // --- News Card Sub-Component (NextImage का उपयोग करने के लिए अपडेट किया गया) ---
 const NewsCard = forwardRef(({ post, categoryMap }, ref) => (
@@ -271,29 +400,47 @@ const NewsPageContent = () => {
 
   // RTK Query Hook
   const {
-    data: postData = { posts: [], hasMore: false, currentPage: 1 },
+    data: postData = { 
+      posts: [], 
+      hasMore: false, 
+      currentPage: 1, 
+      totalPages: 1, 
+      totalPosts: 0 
+    },
     isFetching,
     isLoading,
     isError,
     error,
+    refetch,
   } = useGetAllPostsQuery({
     page: page,
     category: currentCategory,
     limit: ITEMS_PER_PAGE,
   });
+  console.log(postData , "POST")
 
   // पोस्ट डेटा को अनुकूलित करें
   const posts = useMemo(() => postData.posts || [], [postData.posts]);
   const hasMore = postData.hasMore;
+  const totalPages = postData?.pagination?.pages || 1;
+  const totalPosts = postData?.pagination?.total || 0;
 
-  // अगले पेज को लोड करने का फंक्शन
+  // पेज बदलने का फंक्शन
+  const handlePageChange = useCallback((newPage) => {
+    if (newPage >= 1 && newPage <= totalPages && !isFetching) {
+      setPage(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [totalPages, isFetching]);
+
+  // अगले पेज को लोड करने का फंक्शन (इनफिनिट स्क्रॉल)
   const fetchNextPage = useCallback(() => {
     if (hasMore && !isFetching) {
       setPage((prevPage) => prevPage + 1);
     }
   }, [hasMore, isFetching]);
 
-  // Intersection Observer Logic (इंफिनिट स्क्रॉल)
+  // Intersection Observer Logic (इनफिनिट स्क्रॉल)
   useEffect(() => {
     if (isLoading || isFetching) return;
 
@@ -336,9 +483,12 @@ const NewsPageContent = () => {
   const pageTitle = categoryMap[currentCategory] || "ताज़ा खबरें";
   const showLoader = isFetching && page > 1;
 
+  // Calculate showing range
+  const startPost = totalPosts > 0 ? (page - 1) * ITEMS_PER_PAGE + 1 : 0;
+  const endPost = Math.min(page * ITEMS_PER_PAGE, totalPosts);
+
   return (
     <>
-  
       <div className="min-h-screen bg-white text-gray-900 font-serif">
         {/* **ब्रेकिंग न्यूज़ टिकर** */}
         <BreakingNewsTicker />
@@ -376,6 +526,15 @@ const NewsPageContent = () => {
               <CurrentDateDisplay />
             </div>
 
+            {/* Showing results info */}
+            {!isLoading && !isError && posts.length > 0 && (
+              <div className="text-sm text-gray-600 mb-4 text-center md:text-left">
+                कुल <span className="font-bold text-yellow-600">{totalPosts}</span> खबरों में से{' '}
+                <span className="font-bold text-yellow-600">{startPost}</span> -{' '}
+                <span className="font-bold text-yellow-600">{endPost}</span> दिखाई जा रही हैं
+              </div>
+            )}
+
             {/* लोडिंग (पहला लोड) */}
             {isLoading && page === 1 && <LoadingState />}
 
@@ -390,7 +549,10 @@ const NewsPageContent = () => {
                   {error?.error || error?.data?.message || "कनेक्शन एरर।"}
                 </p>
                 <button
-                  onClick={() => setPage(1)}
+                  onClick={() => {
+                    setPage(1);
+                    refetch();
+                  }}
                   className="mt-4 bg-gray-900 text-white px-6 py-3 rounded-lg font-bold hover:bg-gray-700 transition flex items-center gap-2 mx-auto"
                 >
                   <Loader2 className="w-4 h-4" /> फिर से कोशिश करें
@@ -437,22 +599,35 @@ const NewsPageContent = () => {
               </div>
             )}
 
+            {/* पेजिनेशन नंबर्स (Bottom) */}
+            {!isLoading && !isError && posts.length > 0 && (
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                isLoading={isFetching}
+              />
+            )}
+
             {/* कोई और खबर नहीं */}
             {!hasMore && posts.length > 0 && (
-              <div className="text-center py-10 border-t border-gray-300 mt-10">
+              <div className="text-center py-6 border-t border-gray-300 mt-6">
                 <p className="text-base font-bold text-gray-700">
-                  सभी खबरें लोड हो गईं।
+                  🎉 सभी खबरें लोड हो गईं
+                </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  कुल {totalPosts} खबरें उपलब्ध हैं
                 </p>
               </div>
             )}
           </div>
         </main>
 
-        {/* 4. Footer component */}
+        {/* Footer component */}
         <Footer />
 
         {/* **विज्ञापन मॉडाल** */}
-        <AdDialog isOpen={isAdOpen} onClose={handleAdClose} />
+        {/* <AdDialog isOpen={isAdOpen} onClose={handleAdClose} /> */}
       </div>
     </>
   );
