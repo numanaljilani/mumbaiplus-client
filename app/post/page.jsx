@@ -1,4 +1,3 @@
-
 "use client"
 import React, {
   useState,
@@ -14,6 +13,7 @@ import {
   useGetAllPostsQuery,
   useDeletePostMutation
 } from "../../service/api/api";
+import EditPostDialog from "@/components/admin/EditPostDialog"; // Import the dialog
 import {
   Clock,
   Loader2,
@@ -57,7 +57,7 @@ const getStatusDetails = (status) => {
 };
 
 // --- Sub-Components ---
-const UserPostCard = ({ post, onDelete }) => {
+const UserPostCard = ({ post, onDelete, onEdit }) => {
   const { label, color, icon: Icon } = getStatusDetails(post.status);
 
   return (
@@ -108,13 +108,13 @@ const UserPostCard = ({ post, onDelete }) => {
         
         {/* Action Buttons - Stack on mobile, row on larger screens */}
         <div className="flex flex-col xs:flex-row gap-2 sm:gap-3 mt-4 sm:mt-3">
-          {/* Edit */}
-          <Link
-            href={`/post/edit/${post._id}`}
+          {/* Edit - Now opens dialog instead of navigating */}
+          <button
+            onClick={() => onEdit(post)}
             className="flex items-center justify-center sm:justify-start gap-1 text-sm md:text-base font-semibold text-blue-600 hover:text-blue-800 transition px-3 py-2 sm:px-0 sm:py-0 border border-blue-200 sm:border-none rounded-lg sm:rounded-none bg-blue-50 sm:bg-transparent"
           >
             <Edit className="w-4 h-4" /> <span className="sm:ml-1">संपादित करें</span>
-          </Link>
+          </button>
           
           {/* Delete */}
           <button
@@ -155,6 +155,8 @@ export default function UserPostsDashboard() {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedPost, setSelectedPost] = useState(null); // State for selected post
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false); // State for dialog visibility
   const observerRef = useRef(null);
   const lastPostRef = useRef(null);
 
@@ -245,10 +247,36 @@ export default function UserPostsDashboard() {
     }
   };
 
+  // Edit post handler - opens dialog
+  const handleEditPost = (post) => {
+    setSelectedPost(post);
+    setIsEditDialogOpen(true);
+  };
+
+  // Handle successful edit
+  const handleEditSuccess = () => {
+    refetch(); // Refresh the posts list
+    // toast.success("पोस्ट सफलतापूर्वक अपडेट हो गई");
+  };
+
+  // Close dialog handler
+  const handleCloseDialog = () => {
+    setIsEditDialogOpen(false);
+    setSelectedPost(null);
+  };
+
   const showLoader = isFetching && page > 1;
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
+      
+      {/* Edit Post Dialog */}
+      <EditPostDialog
+        post={selectedPost}
+        isOpen={isEditDialogOpen}
+        onClose={handleCloseDialog}
+        onSuccess={handleEditSuccess}
+      />
       
       <main className="py-4 sm:py-6 md:py-8 lg:py-12">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 max-w-4xl lg:max-w-6xl">
@@ -343,6 +371,7 @@ export default function UserPostsDashboard() {
                     <UserPostCard
                       post={post}
                       onDelete={handleDeletePost}
+                      onEdit={handleEditPost} // Pass edit handler
                     />
                   </div>
                 );

@@ -92,8 +92,8 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
         images: formData.imageUrl ? [formData.imageUrl] : [],
       };
       
-      await updatePost({ id: post._id, data: updateData }).unwrap();
-      
+      const updated = await updatePost({ id: post._id, data: updateData }).unwrap();
+      console.log(updated ,">>>>>")
       toast.success('✅ पोस्ट सफलतापूर्वक अपडेट हो गई');
       if (onSuccess) onSuccess();
       onClose();
