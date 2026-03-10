@@ -26,6 +26,7 @@ import {
   ListOrdered,
   Plus,
 } from "lucide-react";
+import SessionCheckerWithUI from "../../components/SessionChecker";
 
 // --- Configuration ---
 const ITEMS_PER_PAGE = 10;
@@ -399,7 +400,7 @@ export default function UserPostsDashboard() {
           )}
         </div>
       </main>
-
+<SessionCheckerWithUI/>
       <Footer />
     </div>
   );

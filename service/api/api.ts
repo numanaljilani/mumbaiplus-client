@@ -85,6 +85,17 @@ export const apis = createApi({
         };
       },
     }),
+    checkSession: builder.mutation({
+      query: (args) => {
+        return {
+          url: "/auth/check-session",
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        };
+      },
+    }),
 
     registerReporter: builder.mutation({
       query: (args) => {
@@ -272,6 +283,7 @@ export const {
   useResetPasswordMutation,
   useMeMutation,
   useIsAvailableMutation,
+  useCheckSessionMutation,
 
   useGetAllPostsQuery,
   useLazyGetAllPostsQuery,

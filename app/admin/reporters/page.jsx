@@ -16,6 +16,7 @@ import {
 } from '../../../service/api/api'; 
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import SessionCheckerWithUI from '../../../components/SessionChecker';
 // पाथ को अपने फ़ाइल स्ट्रक्चर के अनुसार बदलें।
 
 // --- Type Definitions (Recommended for real-world) ---
@@ -459,7 +460,7 @@ export const ReporterAdminPage = () => {
                     कुल रिपोर्टर: {reporters?.length || 0} | प्रदर्शित: {filteredReporters.length}
                 </div>
             </div>
-
+<SessionCheckerWithUI/>
             {/* Modals */}
             <ReporterDetailsModal
                 isOpen={isDetailModalOpen}

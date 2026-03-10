@@ -37,6 +37,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
+import SessionCheckerWithUI from "../components/SessionChecker";
 
 // --- Configuration ---
 
@@ -417,7 +418,7 @@ const NewsPageContent = () => {
     category: currentCategory,
     limit: ITEMS_PER_PAGE,
   });
-  console.log(postData , "POST")
+  // console.log(postData , "POST")
 
   // पोस्ट डेटा को अनुकूलित करें
   const posts = useMemo(() => postData.posts || [], [postData.posts]);
@@ -655,6 +656,7 @@ export default function NewsPage() {
     return (
         <Suspense fallback={<PageLoadingFallback />}>
             <NewsPageContent />
+            <SessionCheckerWithUI/>
         </Suspense>
     );
 }

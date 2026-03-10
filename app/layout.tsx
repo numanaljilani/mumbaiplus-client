@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ReduxWrap from "@/components/ReduxWrap"
 import Header from "@/components/Header"
+import SessionCheckerWithUI from "@/components/SessionChecker"
 
 export const metadata: Metadata = {
   title: "मुंबई प्लस - मुंबई की आवाज़, अब हर दिन आपके साथ!",

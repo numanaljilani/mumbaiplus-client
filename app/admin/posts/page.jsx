@@ -25,6 +25,7 @@ import {
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import SessionCheckerWithUI from "../../../components/SessionChecker";
 
 // Loading Component
 const LoadingSpinner = () => (
@@ -493,6 +494,7 @@ export default function AdminPostsPage() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <AdminPostsContent />
+      <SessionCheckerWithUI/>
     </Suspense>
   );
 }
