@@ -119,7 +119,7 @@ export default async function NewsDetail({ params }) {
               {/*  */}
               <img
                 src={news.image}
-                alt={news.title}
+                alt={news.heading}
                 width={1200}
                 height={600}
                 className="w-full h-auto max-h-[500px] rounded-2xl shadow-xl object-cover"
@@ -287,10 +287,10 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: `${news.title} - मुंबई प्लस`,
+    title: `${news.heading} - मुंबई प्लस`,
     description: news.description?.substring(0, 160),
     openGraph: {
-      title: news.title,
+      title: news.heading,
       description: news.description,
       images: news.image ? [{ url: news.image }] : [],
       type: "article",
