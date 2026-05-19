@@ -51,7 +51,7 @@ export default async function NewsDetail({ params }) {
   const pageUrl = `${
     process.env.NEXT_PUBLIC_SITE_URL || "https://mumbaiplus.in"
   }/news/${id}`;
-  const shareText = encodeURIComponent(`${news.title} - मुंबई प्लस`);
+  const shareText = encodeURIComponent(`${news.heading} - मुंबई प्लस`);
 
   // Function to format date to Indian timezone (IST)
   const formatDate = (dateString) => {
