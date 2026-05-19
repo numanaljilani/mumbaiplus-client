@@ -37,8 +37,10 @@ export default async function NewsDetail({ params }) {
     const res = await fetch(`${server}/api/posts/${id}`, {
       cache: "no-store",
     });
+   
     if (!res.ok) throw new Error("News not found");
     news = await res.json();
+     console.log(news)
 
   } catch (err) {
     console.error("Fetch error:", err);
@@ -276,7 +278,7 @@ export async function generateMetadata({ params }) {
   let news = null;
   // Use the 'server' constant imported from '../../../contants'
   try {
-    const res = await fetch(`${server}/api/posts/${params.id}`, {
+    const res = await fetch(`${server}/api/posts/${params?.id}`, {
       cache: "no-store",
     });
     if (res.ok) news = await res.json();
@@ -292,7 +294,12 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: news.heading,
       description: news.description,
-      images: news.image ? [{ url: news.image }] : [],
+      images:  [{
+        url: news.image,
+        width: 1200,
+        height: 630,
+        alt: news.heading,
+      }],
       type: "article",
       publishedTime: news.createdAt,
     },
