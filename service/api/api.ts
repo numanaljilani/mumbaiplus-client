@@ -113,6 +113,8 @@ export const apis = createApi({
 
     updateProfile: builder.mutation({
       query: ({ data, id }) => {
+
+        
  
         return {
           url: `/update-with-image`,
@@ -218,11 +220,15 @@ export const apis = createApi({
     }),
     // अपडेट
     updatePost: builder.mutation({
-      query: ({ id, ...body }) => ({
+      query: ({id , body} ) => 
+        {
+          console.log(body , "body")
+          return ({
+        
         url: `/posts/${id}`,
         method: "PUT",
         body,
-      }),
+      })},
       // invalidatesTags: ['Post'],
     }),
     verifyPost: builder.mutation({

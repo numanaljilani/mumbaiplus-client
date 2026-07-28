@@ -36,7 +36,7 @@ export default function Footer() {
             
             {/* Facebook */}
             <Link
-              href="https://facebook.com/mumbaiplus"
+              href="https://www.facebook.com/mumbaiplusnews/"
               target="_blank"
               aria-label="Facebook"
               className={`${baseTextColor} ${hoverAccentColor} hover:scale-110 transition-all duration-300`}
@@ -47,7 +47,7 @@ export default function Footer() {
             </Link>
 
             {/* X (Twitter) */}
-            <Link
+            {/* <Link
               href="https://twitter.com/mumbaiplus"
               target="_blank"
               aria-label="X (Twitter)"
@@ -56,11 +56,11 @@ export default function Footer() {
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
-            </Link>
+            </Link> */}
 
             {/* Instagram */}
             <Link
-              href="https://instagram.com/mumbaiplus"
+              href="https://www.instagram.com/mumbaiplusnews"
               target="_blank"
               aria-label="Instagram"
               className={`${baseTextColor} ${hoverAccentColor} hover:scale-110 transition-all duration-300`}
@@ -72,7 +72,7 @@ export default function Footer() {
 
              {/* YouTube */}
             <Link
-              href="https://youtube.com/mumbaiplus"
+              href="https://m.youtube.com/c/mumbaiplusnews"
               target="_blank"
               aria-label="YouTube"
               className={`${baseTextColor} ${hoverAccentColor} hover:scale-110 transition-all duration-300`}

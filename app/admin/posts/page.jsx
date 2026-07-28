@@ -20,7 +20,6 @@ import {
   AlertCircle,
   Eye,
   EyeOff,
-
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
@@ -63,13 +62,11 @@ function AdminPostsContent() {
       verificationFilter === "verified"
         ? true
         : verificationFilter === "unverified"
-        ? false
-        : undefined,
+          ? false
+          : undefined,
     startDate: dateRange.start,
     endDate: dateRange.end,
   });
-
-
 
   const [approvePost] = useApprovePostMutation();
   const [deletePost] = useDeletePostMutation();
@@ -84,7 +81,7 @@ function AdminPostsContent() {
   // Handle Post Approval
   const handleApprove = async (id) => {
     const confirmed = window.confirm(
-      "क्या आप इस पोस्ट को अप्रूव करना चाहते हैं?"
+      "क्या आप इस पोस्ट को अप्रूव करना चाहते हैं?",
     );
     if (!confirmed) return;
 
@@ -111,7 +108,7 @@ function AdminPostsContent() {
   // Handle Delete
   const handleDelete = async (id) => {
     const confirmed = window.confirm(
-      "क्या आप इस पोस्ट को डिलीट करना चाहते हैं?"
+      "क्या आप इस पोस्ट को डिलीट करना चाहते हैं?",
     );
     if (!confirmed) return;
 
@@ -128,7 +125,7 @@ function AdminPostsContent() {
   const stats = {
     pending,
     approved,
-    verified : approved,
+    verified: approved,
     total,
   };
 
@@ -287,64 +284,64 @@ function AdminPostsContent() {
         {!isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post) => (
-             
               <div
                 key={post?._id}
                 className={`bg-white rounded-3xl shadow-2xl overflow-hidden border-l-8 ${
                   post.status === "approved"
                     ? "border-green-500"
                     : post.status === "rejected"
-                    ? "border-red-500"
-                    : "border-yellow-500"
+                      ? "border-red-500"
+                      : "border-yellow-500"
                 }`}
               >
                 {/* Image */}
                 {post.image && (
-                  <Link href={`/news/${post?._id}`} className="cursor-pointer">
-                  <div className="relative h-64 bg-gray-100">
-                    <div className="w-full border-2 max-h-1/2 overflow-hidden">
-                    <img
-                      src={post.image}
-                      alt={post.heading}
-                      fill
-                      className="object-fit overflow-hidden"
-                    />
-                    </div>
-                    <div className="absolute top-4 right-4 flex flex-col gap-2">
-                      <div
-                        className={`px-4 py-2 rounded-full font-bold ${
-                          post.status === "approved"
-                            ? "bg-green-600 text-white"
+                  <Link
+                    href={`/news/${post?._id}`}
+                    className="cursor-pointer block"
+                  >
+                    <div className="relative w-full h-56 md:h-64 overflow-hidden bg-gray-100">
+                      <img
+                        src={post.image}
+                        alt={post.heading}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      />
+
+                      {/* Status Badges */}
+                      <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
+                        <div
+                          className={`px-3 py-1.5 rounded-full text-sm font-bold shadow-md ${
+                            post.status === "approved"
+                              ? "bg-green-600 text-white"
+                              : post.status === "rejected"
+                                ? "bg-red-600 text-white"
+                                : "bg-yellow-600 text-white"
+                          }`}
+                        >
+                          {post.status === "approved"
+                            ? "अप्रूव्ड"
                             : post.status === "rejected"
-                            ? "bg-red-600 text-white"
-                            : "bg-yellow-600 text-white"
-                        }`}
-                      >
-                        {post.status === "approved"
-                          ? "अप्रूव्ड"
-                          : post.status === "rejected"
-                          ? "रिजेक्टेड"
-                          : "पेंडिंग"}
-                      </div>
-                      {post.isVerified && (
-                        <div className="bg-blue-600 text-white px-4 py-2 rounded-full font-bold flex items-center gap-1">
-                          <CheckCircle className="w-4 h-4" />
-                          वेरीफाइड
+                              ? "रिजेक्टेड"
+                              : "पेंडिंग"}
                         </div>
-                      )}
+
+                        {post.isVerified && (
+                          <div className="bg-blue-600 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-md flex items-center gap-1">
+                            <CheckCircle className="w-4 h-4" />
+                            वेरीफाइड
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
                   </Link>
                 )}
 
                 {/* Content */}
                 <div className="p-6">
                   <h3 className="text-2xl font-bold text-gray-800 mb-3 line-clamp-2">
-                
                     {post.heading}
-              
                   </h3>
-            
+
                   <p className="text-gray-600 mb-4 line-clamp-3">
                     {post.content}
                   </p>
@@ -357,7 +354,7 @@ function AdminPostsContent() {
                       <div>
                         {format(
                           new Date(post.createdAt),
-                          "dd MMM yyyy, hh:mm a"
+                          "dd MMM yyyy, hh:mm a",
                         )}
                       </div>
                     </div>
@@ -494,7 +491,7 @@ export default function AdminPostsPage() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <AdminPostsContent />
-      <SessionCheckerWithUI/>
+      <SessionCheckerWithUI />
     </Suspense>
   );
 }

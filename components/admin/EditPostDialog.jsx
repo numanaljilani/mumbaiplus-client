@@ -30,28 +30,27 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
     tags: '',
     isVerified: false,
     isFeatured: false,
-    imageUrl: '',
   });
-  
+
   const [imagePreview, setImagePreview] = useState('');
+  const [imageFile, setImageFile] = useState(null); // real File object
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [updatePost] = useUpdatePostMutation();
 
   useEffect(() => {
     if (post) {
       setFormData({
-        title: post.heading
- || '',
+        title: post.heading || '',
         content: post.description || '',
         category: post.category || 'home',
         status: post.status || 'pending',
         tags: Array.isArray(post.tags) ? post.tags.join(', ') : post.tags || '',
         isVerified: post.isVerified || false,
         isFeatured: post.isFeatured || false,
-        imageUrl: post.image || '',
       });
       setImagePreview(post.image || '');
+      setImageFile(null); // reset file when post changes
     }
   }, [post]);
 
@@ -59,41 +58,67 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file); // keep the actual File
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
-        setFormData(prev => ({ ...prev, imageUrl: reader.result }));
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const handleRemoveImage = () => {
+    setImagePreview('');
+    setImageFile(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!formData.title.trim() || !formData.content.trim()) {
       toast.error('कृपया टाइटल और कंटेंट दर्ज करें');
       return;
     }
 
     setIsSubmitting(true);
+
     try {
-      const updateData = {
-        ...formData,
-        tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
-        images: formData.imageUrl ? [formData.imageUrl] : [],
-      };
-      
-      const updated = await updatePost({ id: post._id, data: updateData }).unwrap();
-      console.log(updated ,">>>>>")
+      const formDataToSend = new FormData();
+
+      formDataToSend.append('heading', formData.title);
+      formDataToSend.append('description', formData.content);
+      formDataToSend.append('category', formData.category);
+      formDataToSend.append('status', formData.status);
+      formDataToSend.append('tags', formData.tags);
+      formDataToSend.append('isVerified', formData.isVerified);
+      formDataToSend.append('isFeatured', formData.isFeatured);
+
+      // Only append image if user selected a new file
+      if (imageFile) {
+        formDataToSend.append('image', imageFile);
+      }
+
+      // ⚠️ Important: Adjust this according to your RTK Query endpoint
+      // Most common patterns:
+      // 1. { id, body: formDataToSend }
+      // 2. { id, formData: formDataToSend }
+      // 3. Just the FormData if your endpoint is defined that way
+
+      const updated = await updatePost({
+        id: post._id,
+        body: formDataToSend, // ← change to `formData` if your endpoint expects that
+      }).unwrap();
+
+      console.log(updated, '>>>>>');
       toast.success('✅ पोस्ट सफलतापूर्वक अपडेट हो गई');
       if (onSuccess) onSuccess();
       onClose();
@@ -107,12 +132,14 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
 
   const handleStatusChange = async (newStatus) => {
     try {
-      await updatePost({ 
-        id: post._id, 
-        data: { status: newStatus } 
+      await updatePost({
+        id: post._id,
+        body: { status: newStatus }, // plain object is fine for status-only update
       }).unwrap();
-      
-      toast.success(`✅ पोस्ट ${newStatus === 'approved' ? 'अप्रूव्ड' : 'रिजेक्टेड'} हो गई`);
+
+      toast.success(
+        `✅ पोस्ट ${newStatus === 'approved' ? 'अप्रूव्ड' : 'रिजेक्टेड'} हो गई`
+      );
       if (onSuccess) onSuccess();
       onClose();
     } catch (error) {
@@ -170,7 +197,7 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column - Main Content */}
+              {/* Left Column */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Title */}
                 <div>
@@ -218,13 +245,10 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="टैग्स को कॉमा से अलग करें (उदा: खेल, क्रिकेट, आईपीएल)"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    टैग्स यूजर को रिलेटेड कंटेंट खोजने में मदद करते हैं
-                  </p>
                 </div>
               </div>
 
-              {/* Right Column - Sidebar */}
+              {/* Right Column */}
               <div className="space-y-6">
                 {/* Image Upload */}
                 <div>
@@ -242,10 +266,7 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
                         />
                         <button
                           type="button"
-                          onClick={() => {
-                            setImagePreview('');
-                            setFormData(prev => ({ ...prev, imageUrl: '' }));
-                          }}
+                          onClick={handleRemoveImage}
                           className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full hover:bg-red-700"
                         >
                           <X className="w-4 h-4" />
@@ -285,7 +306,7 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    {categories.map(cat => (
+                    {categories.map((cat) => (
                       <option key={cat.value} value={cat.value}>
                         {cat.label}
                       </option>
@@ -304,7 +325,7 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
-                    {statusOptions.map(option => (
+                    {statusOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
                       </option>
@@ -347,10 +368,18 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
                 <div className="p-4 bg-gray-50 rounded-xl">
                   <h4 className="font-bold text-gray-800 mb-2">पोस्ट स्टैट्स</h4>
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>व्यूज: <span className="font-bold">{post?.views || 0}</span></div>
-                    <div>लाइक्स: <span className="font-bold">{post?.likesCount || 0}</span></div>
-                    <div>कमेंट्स: <span className="font-bold">{post?.commentsCount || 0}</span></div>
-                    <div>शेयर्स: <span className="font-bold">{post?.shares || 0}</span></div>
+                    <div>
+                      व्यूज: <span className="font-bold">{post?.views || 0}</span>
+                    </div>
+                    <div>
+                      लाइक्स: <span className="font-bold">{post?.likesCount || 0}</span>
+                    </div>
+                    <div>
+                      कमेंट्स: <span className="font-bold">{post?.commentsCount || 0}</span>
+                    </div>
+                    <div>
+                      शेयर्स: <span className="font-bold">{post?.shares || 0}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -362,8 +391,8 @@ export default function EditPostDialog({ post, isOpen, onClose, onSuccess }) {
                 <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0" />
                 <div>
                   <p className="text-sm text-yellow-800">
-                    <strong>नोट:</strong> पोस्ट में बदलाव करने पर, यह ऑटोमेटिकली सभी यूजर्स को दिखाई देगी। 
-                    कृपया सभी जानकारी दोबारा चेक कर लें।
+                    <strong>नोट:</strong> पोस्ट में बदलाव करने पर, यह ऑटोमेटिकली सभी यूजर्स को
+                    दिखाई देगी। कृपया सभी जानकारी दोबारा चेक कर लें।
                   </p>
                 </div>
               </div>
